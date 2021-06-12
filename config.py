@@ -1,0 +1,10 @@
+import os
+
+BINANCE_API_KEY = os.environ['BINANCE_API_KEY']
+BINANCE_SECRET_KEY = os.environ['BINANCE_SECRET_KEY']
+
+TELEGRAM_TOKEN = os.environ['TELEGRAM_TOKEN']
+
+TELEGRAM_CHAT_ID = os.environ['TELEGRAM_CHAT_ID']
+
+COINBASE_API = os.environ['COINBASE_API']

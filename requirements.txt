@@ -1,0 +1,8 @@
+ccxt
+schedule
+ta
+pandas
+pandas-ta
+Historic-Crypto
+pyTelegramBotAPI
+dataframe_image
