@@ -1,3 +1,6 @@
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/taharushain/ParabolicTraderBot/blob/main/LICENSE)
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/taharushain/ParabolicTraderBot/issues)
+
 
 # Parabolic Trader Bot
 
