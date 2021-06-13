@@ -35,7 +35,7 @@ The StrategyTesting class is where the legwork is done and contains the required
 ### Notebook
 A notebook is provided that uses the StrategyClass to backtest different currency pairs, use it throughly before deciding any strategy to trade on. 
 
-*This notebook uses Coinbase for historical data and the trader currently is used for Binance, which is not apples to apples comparison and may some currency pairs may not be found*
+*This notebook uses Coinbase for historical data and the trader currently is used for Binance, which is not apples to apples comparison and some currency pairs may not be found*
 
 ### Feel free to contribute
 This project is under development and requires contribution, feel free to send your PR if you make any improvements.
