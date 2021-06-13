@@ -45,9 +45,11 @@ def buy_order(symbol, st):
 	# order = binance.createMarketBuyOrder(symbol, amount_to_buy)
 
 	# extra params and overrides if needed
-	binance_params = {
-		'test': True,  # test if it's valid, but don't actually place it
-	}
+	isTestRun = db.get_enable_status()['test_run']
+	if isTestRun == 1:
+		binance_params = {
+			'test': True,  # test if it's valid, but don't actually place it
+		}
 	order = binance.createOrder(symbol, 'market', 'buy', amount_to_buy, symbol_price, binance_params)
 	stop_loss_price = st.df.iloc[-1]['stop_loss']
 	stop_profit_price = st.df.iloc[-1]['stop_profit']
@@ -64,9 +66,11 @@ def sell_order(symbol, st, last_order):
 	symbol_price = float(binance.fetchTicker(symbol).get('last'))
 	## place order
 	# extra params and overrides if needed
-	binance_params = {
-		'test': True,  # test if it's valid, but don't actually place it
-	}
+	isTestRun = db.get_enable_status()['test_run']
+	if isTestRun == 1:
+		binance_params = {
+			'test': True,  # test if it's valid, but don't actually place it
+		}
 	order = binance.createOrder(symbol, 'market', 'sell', amount_to_sell, symbol_price, binance_params)
 	# stop_loss_price = st.df.iloc[-1]['stop_loss']
 	# stop_profit_price = st.df.iloc[-1]['stop_profit']

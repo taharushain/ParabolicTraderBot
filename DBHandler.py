@@ -27,10 +27,10 @@ class DBHandler(object):
 
 		self.cur.execute('drop table if exists enabled')
 		self.cur.execute('''CREATE TABLE enabled
-		               ( execute_orders NUMERIC)
+		               ( execute_orders NUMERIC, test_run NUMERIC)
 		               ''')
-		self.cur.execute('''insert into enabled (execute_orders)
-               values (1);''')
+		self.cur.execute('''insert into enabled (execute_orders, test_run)
+               values (1, 1);''')
 
 		self.con.commit()
 		self.cur.close()
@@ -60,6 +60,20 @@ class DBHandler(object):
 		elif enable=='0':
 			update_query = f'''update enabled
 					set execute_orders = 0;'''
+			self.cur.execute(update_query)
+
+		self.con.commit()
+		self.cur.close()
+
+	def update_testrun_status(self, enable):
+		self.cur = self.con.cursor()
+		if enable=='1':
+			update_query = f'''update enabled
+					set test_run = 1;'''
+			self.cur.execute(update_query)
+		elif enable=='0':
+			update_query = f'''update enabled
+					set test_run = 0;'''
 			self.cur.execute(update_query)
 
 		self.con.commit()
@@ -98,6 +112,14 @@ class DBHandler(object):
 		self.cur = self.con.cursor()
 		keys=['execute_orders']
 		self.cur.execute("select execute_orders from enabled")
+		result_set = self.cur.fetchone()
+		self.cur.close()
+		return self.get_dict_from_cursor(keys, result_set)
+
+	def get_testrun_status(self):
+		self.cur = self.con.cursor()
+		keys=['test_run']
+		self.cur.execute("select test_run from enabled")
 		result_set = self.cur.fetchone()
 		self.cur.close()
 		return self.get_dict_from_cursor(keys, result_set)

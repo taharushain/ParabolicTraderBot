@@ -19,6 +19,8 @@ def help(message):
 		'/portfolio\n'+\
 		'/set_enable_status [0|1] (0=False, 1=True)\n'+\
 		'/get_enable_status\n'+\
+		'/set_test_run_status [0|1] (0=False, 1=True)\n'+\
+		'/get_test_run_status\n'+\
 		'/get_chat_id\n'+\
 		'/get_order\n'+\
 		'/get_params\n'+\
@@ -94,6 +96,21 @@ def set_enable_status(message):
 		if len(msg) == 2 and test_enable_param(msg[1]):
 			DBHandler().update_enable_status(msg[1])
 			bot.send_message(message.chat.id, 'Status: \n'+json.dumps(DBHandler().get_enable_status(), indent=2))
+		else:
+			bot.send_message(message.chat.id, 'Incorrect Parameters')
+
+@bot.message_handler(commands=['get_enable_status'])
+def get_test_run_status(message):
+	if message.chat.id == chat_id:
+		bot.send_message(message.chat.id, json.dumps(DBHandler().get_testrun_status(), indent=2))
+
+@bot.message_handler(commands=['set_enable_status'])
+def set_test_run_status(message):
+	if message.chat.id == chat_id:
+		msg = message.text.split()
+		if len(msg) == 2 and test_enable_param(msg[1]):
+			DBHandler().update_testrun_status(msg[1])
+			bot.send_message(message.chat.id, 'Status: \n'+json.dumps(DBHandler().get_testrun_status(), indent=2))
 		else:
 			bot.send_message(message.chat.id, 'Incorrect Parameters')
 
