@@ -11,7 +11,7 @@ import numpy as np
 API_KEY = config.TELEGRAM_TOKEN
 bot = telebot.TeleBot(API_KEY)
 
-@bot.message_handler(commands=['help'])
+@bot.message_handler(commands=['help', 'start'])
 def help(message):
 	msg = '/greet\n'+\
 		'/hello\n'+\
@@ -21,6 +21,7 @@ def help(message):
 		'/get_chat_id\n'+\
 		'/get_order\n'+\
 		'/get_params\n'+\
+		'/get_chat_id\n'+\
 		'/insert_params [ta, symbol, scale, stop_loss, stop_profit, enforce_profit, daily_trend] (0=False, 1=True)\n'
 	bot.reply_to(message, msg)
 
@@ -28,6 +29,10 @@ def help(message):
 def greet(message):
 	if message.chat.id == config.TELEGRAM_CHAT_ID:
 		bot.reply_to(message, 'What\'s up doc?')
+
+@bot.message_handler(commands=['get_chat_id'])
+def get_chat_id(message):
+	bot.reply_to(message, message.chat.id)
 	
 @bot.message_handler(commands=['hello'])
 def hello(message):
