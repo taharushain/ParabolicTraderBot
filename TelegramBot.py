@@ -10,6 +10,7 @@ import numpy as np
 
 API_KEY = config.TELEGRAM_TOKEN
 bot = telebot.TeleBot(API_KEY)
+chat_id = int(config.TELEGRAM_CHAT_ID)
 
 @bot.message_handler(commands=['help', 'start'])
 def help(message):
@@ -27,7 +28,7 @@ def help(message):
 
 @bot.message_handler(commands=['greet'])
 def greet(message):
-	if message.chat.id == config.TELEGRAM_CHAT_ID:
+	if message.chat.id == chat_id:
 		bot.reply_to(message, 'What\'s up doc?')
 
 @bot.message_handler(commands=['get_chat_id'])
@@ -36,12 +37,12 @@ def get_chat_id(message):
 	
 @bot.message_handler(commands=['hello'])
 def hello(message):
-	if message.chat.id == config.TELEGRAM_CHAT_ID:
+	if message.chat.id == chat_id:
 		bot.send_message(message.chat.id, 'Hello, how are you.')
 
 @bot.message_handler(commands=['portfolio'])
 def portfolio(message):
-	if message.chat.id == config.TELEGRAM_CHAT_ID:
+	if message.chat.id == chat_id:
 		bot.send_message(message.chat.id, 'Fetching...')
 		bot.send_chat_action(message.chat.id, 'upload_photo')
 		get_portfolio_df()
@@ -50,7 +51,7 @@ def portfolio(message):
 
 @bot.message_handler(commands=['insert_params'])
 def insert_params(message):
-	if message.chat.id == config.TELEGRAM_CHAT_ID:
+	if message.chat.id == chat_id:
 		if len(message.text.split()) == 8:
 			current_params = DBHandler().get_params()
 			chat_id = current_params['chat_id']
@@ -66,29 +67,29 @@ def insert_params(message):
 
 @bot.message_handler(commands=['get_params'])
 def get_params(message):
-	if message.chat.id == config.TELEGRAM_CHAT_ID:
+	if message.chat.id == chat_id:
 		bot.send_message(message.chat.id, json.dumps(DBHandler().get_params(), indent=2))
 
 @bot.message_handler(commands=['get_order'])
 def get_order(message):
-	if message.chat.id == config.TELEGRAM_CHAT_ID:
+	if message.chat.id == chat_id:
 		order = DBHandler().get_order()
 		print(order)
 		bot.send_message(message.chat.id, json.dumps(order, indent=2))
 
 @bot.message_handler(commands=['get_chat_id'])
 def get_chat_id(message):
-	if message.chat.id == config.TELEGRAM_CHAT_ID:
+	if message.chat.id == chat_id:
 		bot.send_message(message.chat.id, message.chat.id)
 
 @bot.message_handler(commands=['get_enable_status'])
 def get_enable_status(message):
-	if message.chat.id == config.TELEGRAM_CHAT_ID:
+	if message.chat.id == chat_id:
 		bot.send_message(message.chat.id, json.dumps(DBHandler().get_enable_status(), indent=2))
 
 @bot.message_handler(commands=['set_enable_status'])
 def set_enable_status(message):
-	if message.chat.id == config.TELEGRAM_CHAT_ID:
+	if message.chat.id == chat_id:
 		msg = message.text.split()
 		if len(msg) == 2 and test_enable_param(msg[1]):
 			DBHandler().update_enable_status(msg[1])
@@ -97,7 +98,7 @@ def set_enable_status(message):
 			bot.send_message(message.chat.id, 'Incorrect Parameters')
 
 def test_message(chat_id, msg):
-	if message.chat.id == config.TELEGRAM_CHAT_ID:
+	if message.chat.id == chat_id:
 		bot.send_message(chat_id, msg)
 
 
@@ -240,7 +241,7 @@ def test_insert_param(ta, symbol, scale, stop_loss, stop_profit, enforce_profit,
 		return False
 
 def send_notification(msg):
-	bot.send_message(config.TELEGRAM_CHAT_ID, msg)
+	bot.send_message(chat_id, msg)
 
 while True:
 	try:
