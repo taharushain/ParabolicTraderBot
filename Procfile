@@ -1,1 +1,1 @@
-web: python TelegramBot.py
+worker: python TelegramBot.py
