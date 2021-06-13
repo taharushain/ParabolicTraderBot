@@ -45,7 +45,7 @@ def buy_order(symbol, st):
 	# order = binance.createMarketBuyOrder(symbol, amount_to_buy)
 
 	# extra params and overrides if needed
-	isTestRun = db.get_enable_status()['test_run']
+	isTestRun = db.get_testrun_status()['test_run']
 	if isTestRun == 1:
 		binance_params = {
 			'test': True,  # test if it's valid, but don't actually place it
@@ -66,7 +66,7 @@ def sell_order(symbol, st, last_order):
 	symbol_price = float(binance.fetchTicker(symbol).get('last'))
 	## place order
 	# extra params and overrides if needed
-	isTestRun = db.get_enable_status()['test_run']
+	isTestRun = db.get_testrun_status()['test_run']
 	if isTestRun == 1:
 		binance_params = {
 			'test': True,  # test if it's valid, but don't actually place it
