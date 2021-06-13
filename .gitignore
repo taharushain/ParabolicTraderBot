@@ -1,5 +1,4 @@
 __pycache__/
 
 backtesting_results/
-db_init.py
 binance_bot.db
