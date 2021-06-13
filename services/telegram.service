@@ -4,15 +4,11 @@ After=multi-user.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/python3.8 /home/ubuntu/trader/TelegramBot.py
 WorkingDirectory=/home/ubuntu/trader/
-Environment=BINANCE_API_KEY=value
-Environment=BINANCE_SECRET_KEY=value
-Environment=TELEGRAM_TOKEN=value
-Environment=TELEGRAM_CHAT_ID=value
-Environment=COINBASE_API=value
+EnvironmentFile=/home/ubuntu/telegram_env
 Restart=always
 RestartSec=2
+ExecStart=/home/ubuntu/env/trader/bin/python3.8 /home/ubuntu/trader/TelegramBot.py
 
 [Install]
 WantedBy=multi-user.target
