@@ -99,7 +99,7 @@ def set_enable_status(message):
 		else:
 			bot.send_message(message.chat.id, 'Incorrect Parameters')
 
-@bot.message_handler(commands=['get_enable_status'])
+@bot.message_handler(commands=['get_test_run_status'])
 def get_test_run_status(message):
 	if message.chat.id == chat_id:
 		bot.send_message(message.chat.id, json.dumps(DBHandler().get_testrun_status(), indent=2))
