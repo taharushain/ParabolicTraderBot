@@ -6,6 +6,7 @@ import ccxt
 import pandas as pd
 import dataframe_image as dfi
 from DBHandler import DBHandler
+import numpy as np
 
 API_KEY = config.TELEGRAM_TOKEN
 bot = telebot.TeleBot(API_KEY)
@@ -38,7 +39,7 @@ def portfolio(message):
 	if message.chat.id == config.TELEGRAM_CHAT_ID:
 		bot.send_message(message.chat.id, 'Fetching...')
 		bot.send_chat_action(message.chat.id, 'upload_photo')
-		get_portfolio()
+		get_portfolio_df()
 		photo = open('portfolio.png', 'rb')
 		bot.send_photo(message.chat.id, photo)
 
@@ -151,6 +152,65 @@ def get_portfolio():
 	dfi.export(portfolio_df, 'portfolio.png')
 	return portfolio_df
 
+def get_portfolio_df():
+	binance = ccxt.binance ({
+    'options': {
+        'adjustForTimeDifference': True, 
+    },
+    'enableRateLimit': True,
+    'apiKey': config.BINANCE_API_KEY,
+    'secret': config.BINANCE_SECRET_KEY,
+	})
+	portfolio = pd.DataFrame.from_records([binance.fetchBalance()['total']]).T
+	symbols = binance.symbols
+	portfolio.columns = ['Balance']
+	portfolio = portfolio[((portfolio['Balance'] != 0) & ('USDT' != portfolio.index) & ('BUSD' != portfolio.index))]
+
+	for symbol in portfolio.index:
+		mOrders = binance.fetchOrders(symbol+'/USDT') if symbol+'/USDT' in symbols else []
+		mOrders.extend(binance.fetchOrders(symbol+'/BUSD') if symbol+'/BUSD' in symbols else [])
+		mOrders.extend(binance.fetchOrders(symbol+'/BTC') if symbol+'/BTC' in symbols else [])
+		df_orders = pd.DataFrame.from_dict(mOrders)
+		df_orders = df_orders.loc[(df_orders.status=='closed'),].set_index('timestamp')
+		
+		pair_list = np.array([], dtype=object)
+		price_list = np.array([], dtype=object)
+		bought,spent,net_usd,sold,retrieved=[0]*5
+		
+		amt,cst = [0]*2
+		for index, row in df_orders.iterrows():
+			pair_list = np.insert(pair_list, 0, row['symbol'])
+			if row['side']=='buy':
+				amt = amt + row['amount']
+				cst = cst + row['cost']
+			elif row['side']=='sell':
+				amt,cst = [0]*2
+
+		pair_list = np.unique(pair_list)
+		for pair in pair_list:
+			price_tag  = pair.split('/').pop()+':'+str(binance.fetchTicker(pair)['last'])
+			price_list = np.insert(price_list, 0, price_tag)
+
+		sums = df_orders[['side','amount', 'cost']].groupby('side').agg('sum')
+		sums['avg_price'] = sums['cost']/sums['amount']
+		if sums.loc[sums.index=='buy',].size > 0:
+			portfolio.loc[portfolio.index==symbol,['bought']] = sums.loc[sums.index=='buy',['amount']].values[0]
+			portfolio.loc[portfolio.index==symbol,['spent']] = sums.loc[sums.index=='buy',['cost']].values[0]
+			portfolio.loc[portfolio.index==symbol,['avg_buy_price']] = sums.loc[sums.index=='buy',['avg_price']].values[0]
+
+		if sums.loc[sums.index=='sell',].size > 0:
+			portfolio.loc[portfolio.index==symbol,['sold']] = sums.loc[sums.index=='sell',['amount']].values[0]
+			portfolio.loc[portfolio.index==symbol,['retrieved']] = sums.loc[sums.index=='sell',['cost']].values[0]
+			portfolio.loc[portfolio.index==symbol,['avg_sell_price']] = sums.loc[sums.index=='sell',['avg_price']].values[0]
+		portfolio.loc[portfolio.index==symbol,['avg_last_buy_price']] = cst/amt if amt > 0 else 0
+		portfolio.loc[portfolio.index==symbol,['market_price']] = ','.join(price_list)
+
+
+	portfolio['net_usd'] = portfolio.fillna(0)['retrieved'] - portfolio['spent']
+	portfolio = portfolio.style.background_gradient()
+	dfi.export(portfolio, 'portfolio.png')
+	return portfolio
+
 def test_enable_param(msg):
 	return True if msg =='0'or msg=='1' else False
 
@@ -177,10 +237,8 @@ def test_insert_param(ta, symbol, scale, stop_loss, stop_profit, enforce_profit,
 def send_notification(msg):
 	bot.send_message(config.TELEGRAM_CHAT_ID, msg)
 
-
 while True:
 	try:
 		bot.polling(none_stop=True)
 	except Exception as ex:
 		print(ex)
-		
