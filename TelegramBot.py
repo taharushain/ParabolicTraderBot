@@ -104,7 +104,7 @@ def get_test_run_status(message):
 	if message.chat.id == chat_id:
 		bot.send_message(message.chat.id, json.dumps(DBHandler().get_testrun_status(), indent=2))
 
-@bot.message_handler(commands=['set_enable_status'])
+@bot.message_handler(commands=['set_test_run_status'])
 def set_test_run_status(message):
 	if message.chat.id == chat_id:
 		msg = message.text.split()
