@@ -45,6 +45,7 @@ def buy_order(symbol, st):
 	# order = binance.createMarketBuyOrder(symbol, amount_to_buy)
 
 	# extra params and overrides if needed
+	binance_params={}
 	isTestRun = db.get_testrun_status()['test_run']
 	if isTestRun == 1:
 		binance_params = {
@@ -67,6 +68,7 @@ def sell_order(symbol, st, last_order):
 	## place order
 	# extra params and overrides if needed
 	isTestRun = db.get_testrun_status()['test_run']
+	binance_params={}
 	if isTestRun == 1:
 		binance_params = {
 			'test': True,  # test if it's valid, but don't actually place it
