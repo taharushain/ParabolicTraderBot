@@ -1,6 +1,7 @@
 [Unit]
 Description=Telegram Bot Service for linux
 After=multi-user.target
+StartLimitIntervalSec=0
 
 [Service]
 Type=simple
@@ -8,7 +9,6 @@ WorkingDirectory=/home/ubuntu/trader/
 EnvironmentFile=/home/ubuntu/telegram_env
 Restart=always
 RestartSec=10s
-StartLimitIntervalSec=0
 ExecStart=/home/ubuntu/env/trader/bin/python3.8 /home/ubuntu/trader/TelegramBot.py
 
 [Install]
