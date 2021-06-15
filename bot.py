@@ -104,14 +104,14 @@ def check_buy_sell_signals(st):
 		order_params = db.get_params(last_order['param_id'])
 		symbol_price = float(binance.fetchTicker(order_params['symbol']).get('last'))
 		if(signal == 'sell'):
-			last_order['price'] = last_order['price'] if last_order['price'] else 0
+			last_order['price'] = float(last_order['price']) if last_order['price'] else 0
 			if(order_params['enforce_profit'] == 1 and symbol_price > last_order['price']):
 				sell_order(order_params['symbol'], st, last_order)	
 			elif(order_params['enforce_profit'] != 1):
 				sell_order(order_params['symbol'], st, last_order)	
-		elif(order_params['stop_loss'] == 1 and symbol_price <= last_order['stop_loss_price']):
+		elif(order_params['stop_loss'] == 1 and symbol_price <= float(last_order['stop_loss_price'])):
 			sell_order(order_params['symbol'], st, last_order)
-		elif(order_params['stop_profit'] == 1 and symbol_price >= last_order['stop_profit_price']):
+		elif(order_params['stop_profit'] == 1 and symbol_price >= float(last_order['stop_profit_price'])):
 			sell_order(order_params['symbol'], st, last_order)
 
 def execute_bot():
