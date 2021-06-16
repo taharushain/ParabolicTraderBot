@@ -215,6 +215,14 @@ class StrategyTesting(object):
            or self.supertrend_condition(row) == 'sell'):
             return 'sell'
 
+    def psar_macd_condition(self, row): 
+        if(self.psar_condition(row) == 'buy'
+           and self.macd_condition(row) == 'buy'):
+            return 'buy'
+        elif(self.psar_condition(row) == 'sell'
+           or self.macd_condition(row) == 'sell'):
+            return 'sell'
+
     def reset_balance(self, balance):
         self.df['status'] = ''
         self.df['amount_bought'] = 0  
@@ -318,6 +326,8 @@ class StrategyTesting(object):
             return self.backtest_handler(amount, self.stoch_rsi_psar_condition, stop_loss, stop_profit, enforce_profit, daily_trend)
         elif ta == 'stoch_rsi_ema':
             return self.backtest_handler(amount, self.stoch_rsi_ema_condition, stop_loss, stop_profit, enforce_profit, daily_trend)
+        elif ta == 'psar_macd':
+            return self.backtest_handler(amount, self.psar_macd_condition, stop_loss, stop_profit, enforce_profit, daily_trend)
       
     def check_condition(self, ta, row):
         if ta == 'bb':
@@ -348,6 +358,8 @@ class StrategyTesting(object):
             return self.stoch_rsi_bb_condition(row)
         elif ta == 'stoch_rsi_ema':
             return self.stoch_rsi_bb_condition(row)
+        elif ta == 'psar_macd':
+            return self.psar_macd_condition(row)
         
     def backtest_stats(self, name, stop_loss, stop_profit, enforce_profit, daily_trend):
         pos_sales = self.df.loc[(self.df['status'] == 'sold') & (self.df['gain'] > 0),].count()[0]
